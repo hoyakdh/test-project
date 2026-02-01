@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { idioms } from '../data/idioms';
+import HanjaTooltip from './HanjaTooltip';
 import { Trophy, ChevronRight, Star, RotateCcw, User, Edit2, Check, Moon, Sun } from 'lucide-react';
 
 export default function Dashboard({ onNavigate, learnedCount, totalCount, onReset, userName, onNameChange, isDarkMode, onToggleDarkMode }) {
@@ -89,7 +90,16 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
                     <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
                 </div>
                 <h2 className="text-3xl font-extrabold mb-1">{dailyIdiom.idiom}</h2>
-                <p className="text-xl opacity-90 font-serif mb-4">{dailyIdiom.hanja}</p>
+                <div className="flex gap-1 mb-4">
+                    {dailyIdiom.hanja.split('').map((char, index) => (
+                        <HanjaTooltip
+                            key={index}
+                            char={char}
+                            meaning={dailyIdiom.hanjaMeanings?.[index]}
+                            className="text-xl opacity-90 font-serif text-white"
+                        />
+                    ))}
+                </div>
                 <p className="text-lg font-medium opacity-95 text-pretty line-clamp-2 md:line-clamp-none whitespace-pre-line">{dailyIdiom.meaning}</p>
 
                 <div className="mt-6 pt-6 border-t border-white/20">

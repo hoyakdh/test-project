@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { idioms } from '../data/idioms';
+import HanjaTooltip from './HanjaTooltip';
 import { ChevronLeft, ChevronRight, Shuffle, Repeat, Volume2 } from 'lucide-react';
 import { speak, stopSpeech } from '../utils/tts';
 
@@ -90,9 +91,16 @@ export default function FlashcardMode() {
                             </button>
                         </div>
 
-                        <p className="text-3xl md:text-4xl font-serif text-slate-400 dark:text-slate-500">
-                            {currentCard.hanja}
-                        </p>
+                        <div className="flex gap-1">
+                            {currentCard.hanja.split('').map((char, index) => (
+                                <HanjaTooltip
+                                    key={index}
+                                    char={char}
+                                    meaning={currentCard.hanjaMeanings?.[index]}
+                                    className="text-3xl md:text-4xl font-serif text-slate-400 dark:text-slate-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors"
+                                />
+                            ))}
+                        </div>
                     </div>
 
                     {/* Back Face (Meaning) */}

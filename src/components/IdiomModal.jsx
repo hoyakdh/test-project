@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { X, Volume2, BookOpen, CheckCircle } from 'lucide-react';
 import { speak, stopSpeech } from '../utils/tts';
+import HanjaTooltip from './HanjaTooltip';
 
 export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
     // Stop speech when modal closes
@@ -42,7 +43,16 @@ export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
                             <Volume2 className="w-5 h-5" />
                         </button>
                     </div>
-                    <p className="text-2xl font-serif text-slate-600 dark:text-slate-400">{idiom.hanja}</p>
+                    <div className="flex justify-center gap-1 mb-1">
+                        {idiom.hanja.split('').map((char, index) => (
+                            <HanjaTooltip
+                                key={index}
+                                char={char}
+                                meaning={idiom.hanjaMeanings?.[index]}
+                                className="text-2xl font-serif text-slate-600 dark:text-slate-400 cursor-help"
+                            />
+                        ))}
+                    </div>
                 </div>
 
                 {/* Content */}
