@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { idioms } from '../data/idioms';
-import { Trophy, ChevronRight, Star } from 'lucide-react';
+import { Trophy, ChevronRight, Star, RotateCcw } from 'lucide-react';
 
-export default function Dashboard({ onNavigate, learnedCount, totalCount }) {
+export default function Dashboard({ onNavigate, learnedCount, totalCount, onReset }) {
     // Random daily idiom (consistent for the day based on date)
     const dailyIdiom = useMemo(() => {
         const today = new Date().toDateString();
@@ -44,9 +44,20 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount }) {
                         <Trophy className="w-5 h-5 text-yellow-500" />
                         나의 학습 현황
                     </h3>
-                    <span className="text-sm font-medium text-slate-500">
-                        {learnedCount} / {totalCount} 완료
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-slate-500">
+                            {learnedCount} / {totalCount} 완료
+                        </span>
+                        {learnedCount > 0 && (
+                            <button
+                                onClick={onReset}
+                                className="p-1 text-slate-300 hover:text-red-500 transition-colors"
+                                title="학습 기록 초기화"
+                            >
+                                <RotateCcw className="w-4 h-4" />
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
                     <div

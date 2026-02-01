@@ -31,10 +31,23 @@ function App() {
     });
   };
 
+  // Reset progress
+  const resetProgress = () => {
+    if (window.confirm('정말 모든 학습 기록을 초기화하시겠습니까? 되돌릴 수 없습니다.')) {
+      setLearnedIds([]);
+      localStorage.removeItem('sajaseong-progress');
+    }
+  };
+
   const renderContent = () => {
     switch (currentTab) {
       case 'home':
-        return <Dashboard onNavigate={setCurrentTab} learnedCount={learnedIds.length} totalCount={idioms.length} />;
+        return <Dashboard
+          onNavigate={setCurrentTab}
+          learnedCount={learnedIds.length}
+          totalCount={idioms.length}
+          onReset={resetProgress}
+        />;
       case 'study':
         return <StudyMode learnedIds={learnedIds} onToggleLearned={toggleLearned} />;
       case 'quiz':

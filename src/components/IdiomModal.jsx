@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Volume2, BookOpen, CheckCircle } from 'lucide-react';
 
-export default function IdiomModal({ idiom, onClose }) {
+export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
     if (!idiom) return null;
 
     return (
@@ -58,11 +58,30 @@ export default function IdiomModal({ idiom, onClose }) {
 
                 </div>
 
-                {/* Action (Optional: TTS or Mark Learned) */}
-                <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                {/* Action */}
+                <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-between items-center gap-3">
+                    <button
+                        onClick={() => onToggle(idiom.id)}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${isLearned
+                            ? 'bg-green-100 text-green-700 border border-green-200'
+                            : 'bg-white text-slate-500 border border-slate-200 hover:bg-primary-50 hover:border-primary-200 hover:text-primary-600'
+                            }`}
+                    >
+                        {isLearned ? (
+                            <>
+                                <CheckCircle className="w-5 h-5" />
+                                학습 완료됨
+                            </>
+                        ) : (
+                            <>
+                                <CheckCircle className="w-5 h-5 opacity-40" />
+                                학습 완료 체크
+                            </>
+                        )}
+                    </button>
                     <button
                         onClick={onClose}
-                        className="px-6 py-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
+                        className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
                     >
                         닫기
                     </button>
