@@ -1,4 +1,3 @@
-```javascript
 import React, { useState } from 'react';
 import { categories, idioms } from '../data/idioms';
 import IdiomModal from './IdiomModal';
@@ -19,11 +18,10 @@ export default function StudyMode({ learnedIds, onToggleLearned }) {
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 <button
                     onClick={() => setSelectedCategory('전체')}
-                    className={`px - 4 py - 2 rounded - full whitespace - nowrap text - sm font - bold transition - colors ${
-    selectedCategory === '전체'
-    ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none'
-    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-} `}
+                    className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors ${selectedCategory === '전체'
+                        ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none'
+                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                        }`}
                 >
                     전체
                 </button>
@@ -31,11 +29,10 @@ export default function StudyMode({ learnedIds, onToggleLearned }) {
                     <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
-                        className={`px - 4 py - 2 rounded - full whitespace - nowrap text - sm font - bold transition - colors ${
-    selectedCategory === cat
-    ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none'
-    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-} `}
+                        className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors ${selectedCategory === cat
+                            ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                            }`}
                     >
                         {cat}
                     </button>
@@ -83,4 +80,3 @@ export default function StudyMode({ learnedIds, onToggleLearned }) {
         </div>
     );
 }
-```
