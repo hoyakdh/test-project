@@ -13,8 +13,9 @@ function App() {
   // Store IDs of learned idioms
   const [learnedIds, setLearnedIds] = useState([]);
   const [userName, setUserName] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Initialize progress and user name
+  // Initialize progress, user name, and dark mode
   useEffect(() => {
     const savedProgress = localStorage.getItem('sajaseong-progress');
     if (savedProgress) {
@@ -25,12 +26,33 @@ function App() {
     if (savedName) {
       setUserName(savedName);
     }
+
+    const savedTheme = localStorage.getItem('sajaseong-theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
   }, []);
 
   // Update Name
   const handleNameChange = (name) => {
     setUserName(name);
     localStorage.setItem('sajaseong-username', name);
+  };
+
+  // Toggle Dark Mode
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => {
+      const newMode = !prev;
+      if (newMode) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('sajaseong-theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('sajaseong-theme', 'light');
+      }
+      return newMode;
+    });
   };
 
   // Toggle learned status
@@ -63,6 +85,8 @@ function App() {
           onReset={resetProgress}
           userName={userName}
           onNameChange={handleNameChange}
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={toggleDarkMode}
         />;
       case 'study':
         return <StudyMode learnedIds={learnedIds} onToggleLearned={toggleLearned} />;

@@ -17,32 +17,32 @@ export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative animate-scale-up">
+            <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative animate-scale-up">
 
                 {/* Header */}
-                <div className="bg-primary-50 p-6 text-center border-b border-primary-100 relative">
+                <div className="bg-primary-50 dark:bg-slate-900 p-6 text-center border-b border-primary-100 dark:border-slate-700 relative">
                     <button
                         onClick={handleClose}
-                        className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-white/50"
+                        className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded-full hover:bg-white/50 dark:hover:bg-slate-700"
                     >
                         <X className="w-6 h-6" />
                     </button>
 
-                    <span className="inline-block text-xs font-bold tracking-wider text-primary-600 bg-white px-2 py-1 rounded-full mb-3 uppercase shadow-sm">
+                    <span className="inline-block text-xs font-bold tracking-wider text-primary-600 dark:text-primary-400 bg-white dark:bg-slate-800 px-2 py-1 rounded-full mb-3 uppercase shadow-sm">
                         {idiom.category}
                     </span>
 
                     <div className="flex items-center justify-center gap-2 mb-1">
-                        <h2 className="text-3xl font-extrabold text-slate-900">{idiom.idiom}</h2>
+                        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">{idiom.idiom}</h2>
                         <button
                             onClick={() => speak(`${idiom.idiom}. ${idiom.meaning}`)}
-                            className="p-1.5 bg-primary-100 text-primary-600 rounded-full hover:bg-primary-200 transition-colors"
+                            className="p-1.5 bg-primary-100 dark:bg-slate-800 text-primary-600 dark:text-primary-400 rounded-full hover:bg-primary-200 dark:hover:bg-slate-700 transition-colors"
                             title="듣기"
                         >
                             <Volume2 className="w-5 h-5" />
                         </button>
                     </div>
-                    <p className="text-2xl font-serif text-slate-600">{idiom.hanja}</p>
+                    <p className="text-2xl font-serif text-slate-600 dark:text-slate-400">{idiom.hanja}</p>
                 </div>
 
                 {/* Content */}
@@ -53,25 +53,25 @@ export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
                         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">
                             <BookOpen className="w-4 h-4" /> 뜻풀이
                         </h3>
-                        <p className="text-lg text-slate-800 font-medium leading-relaxed">
+                        <p className="text-lg text-slate-800 dark:text-slate-100 font-medium leading-relaxed">
                             {idiom.meaning}
                         </p>
                     </div>
 
                     {/* Example */}
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-600">
                         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wide mb-2">
                             실생활 예시
                         </h3>
                         <ul className="space-y-2">
                             {idiom.examples ? (
                                 idiom.examples.map((ex, i) => (
-                                    <li key={i} className="text-slate-700 italic leading-relaxed">
+                                    <li key={i} className="text-slate-700 dark:text-slate-300 italic leading-relaxed">
                                         • "{ex}"
                                     </li>
                                 ))
                             ) : (
-                                <li className="text-slate-700 italic leading-relaxed">
+                                <li className="text-slate-700 dark:text-slate-300 italic leading-relaxed">
                                     "{idiom.example}"
                                 </li>
                             )}
@@ -81,12 +81,12 @@ export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
                 </div>
 
                 {/* Action */}
-                <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-between items-center gap-3">
+                <div className="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center gap-3">
                     <button
                         onClick={() => onToggle(idiom.id)}
                         className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${isLearned
-                            ? 'bg-green-100 text-green-700 border border-green-200'
-                            : 'bg-white text-slate-500 border border-slate-200 hover:bg-primary-50 hover:border-primary-200 hover:text-primary-600'
+                            ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800'
+                            : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600 hover:bg-primary-50 dark:hover:bg-slate-700 hover:border-primary-200 dark:hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400'
                             }`}
                     >
                         {isLearned ? (
@@ -103,7 +103,7 @@ export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
                     </button>
                     <button
                         onClick={handleClose}
-                        className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
+                        className="px-6 py-3 bg-slate-900 dark:bg-slate-700 text-white font-bold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-lg shadow-slate-200 dark:shadow-none"
                     >
                         닫기
                     </button>

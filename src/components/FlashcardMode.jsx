@@ -53,12 +53,12 @@ export default function FlashcardMode() {
         <div className="flex flex-col h-[calc(100vh-140px)] max-h-[800px]">
             {/* Controls Header */}
             <div className="flex items-center justify-between mb-6 px-2">
-                <span className="text-sm font-bold text-slate-500 bg-white px-3 py-1 rounded-full shadow-sm border border-slate-100">
+                <span className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">
                     {currentIndex + 1} / {shuffledIdioms.length}
                 </span>
                 <button
                     onClick={handleShuffle}
-                    className="flex items-center gap-1 text-sm font-bold text-primary-600 hover:text-primary-700 bg-white px-3 py-1 rounded-full shadow-sm border border-slate-100 hover:border-primary-200 transition-colors"
+                    className="flex items-center gap-1 text-sm font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 bg-white dark:bg-slate-800 px-3 py-1 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 hover:border-primary-200 dark:hover:border-primary-500 transition-colors"
                 >
                     <Shuffle className="w-4 h-4" />
                     섞기
@@ -72,25 +72,25 @@ export default function FlashcardMode() {
                     className={`relative w-full h-full text-center transition-transform duration-500 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
                 >
                     {/* Front Face (Idiom) */}
-                    <div className="absolute inset-0 w-full h-full backface-hidden bg-white rounded-3xl shadow-xl border-2 border-slate-100 flex flex-col items-center justify-center p-8 hover:border-primary-200 hover:shadow-2xl transition-all">
-                        <span className="text-sm font-bold text-primary-500 mb-6 bg-primary-50 px-3 py-1 rounded-full">
+                    <div className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-2 border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center p-8 hover:border-primary-200 dark:hover:border-primary-500 hover:shadow-2xl transition-all">
+                        <span className="text-sm font-bold text-primary-500 dark:text-primary-400 mb-6 bg-primary-50 dark:bg-slate-700 px-3 py-1 rounded-full">
                             터치해서 뜻 보기
                         </span>
 
                         <div className="flex flex-col items-center gap-2 mb-6">
-                            <h2 className="text-5xl md:text-6xl font-extrabold text-slate-800 break-keep leading-tight">
+                            <h2 className="text-5xl md:text-6xl font-extrabold text-slate-800 dark:text-white break-keep leading-tight">
                                 {currentCard.idiom}
                             </h2>
                             <button
                                 onClick={(e) => handleSpeak(e, currentCard.idiom)}
-                                className="p-3 bg-primary-50 text-primary-600 rounded-full hover:bg-primary-100 hover:text-primary-700 transition-colors mt-2"
+                                className="p-3 bg-primary-50 dark:bg-slate-700 text-primary-600 dark:text-primary-400 rounded-full hover:bg-primary-100 dark:hover:bg-slate-600 hover:text-primary-700 transition-colors mt-2"
                                 title="듣기"
                             >
                                 <Volume2 className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <p className="text-3xl md:text-4xl font-serif text-slate-400">
+                        <p className="text-3xl md:text-4xl font-serif text-slate-400 dark:text-slate-500">
                             {currentCard.hanja}
                         </p>
                     </div>
@@ -126,14 +126,14 @@ export default function FlashcardMode() {
             <div className="flex items-center justify-between gap-4 mt-8 px-4 max-w-lg mx-auto w-full">
                 <button
                     onClick={handlePrev}
-                    className="p-4 bg-white rounded-2xl shadow-md border border-slate-100 text-slate-600 hover:bg-slate-50 hover:text-primary-600 hover:border-primary-200 transition-all flex-1 flex items-center justify-center gap-2 group"
+                    className="p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-500 transition-all flex-1 flex items-center justify-center gap-2 group"
                 >
                     <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
                     <span className="font-bold">이전</span>
                 </button>
                 <button
                     onClick={handleNext}
-                    className="p-4 bg-primary-600 rounded-2xl shadow-md shadow-primary-200 text-white hover:bg-primary-700 transition-all flex-1 flex items-center justify-center gap-2 group"
+                    className="p-4 bg-primary-600 dark:bg-primary-700 rounded-2xl shadow-md shadow-primary-200 dark:shadow-none text-white hover:bg-primary-700 dark:hover:bg-primary-600 transition-all flex-1 flex items-center justify-center gap-2 group"
                 >
                     <span className="font-bold">다음</span>
                     <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />

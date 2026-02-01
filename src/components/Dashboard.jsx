@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { idioms } from '../data/idioms';
-import { Trophy, ChevronRight, Star, RotateCcw, User, Edit2, Check } from 'lucide-react';
+import { Trophy, ChevronRight, Star, RotateCcw, User, Edit2, Check, Moon, Sun } from 'lucide-react';
 
-export default function Dashboard({ onNavigate, learnedCount, totalCount, onReset, userName, onNameChange }) {
+export default function Dashboard({ onNavigate, learnedCount, totalCount, onReset, userName, onNameChange, isDarkMode, onToggleDarkMode }) {
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState("");
 
@@ -39,7 +39,7 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
                             <input
                                 autoFocus
                                 type="text"
-                                className="block w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition duration-150 ease-in-out"
+                                className="block w-full pl-10 pr-12 py-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition duration-150 ease-in-out"
                                 placeholder="이름을 입력해주세요"
                                 value={tempName}
                                 onChange={(e) => setTempName(e.target.value)}
@@ -54,18 +54,27 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
                         </div>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-2 animate-fade-in">
-                        <h1 className="text-2xl font-bold text-slate-800">
-                            반가워요, <span className="text-primary-600">{userName}</span>님! 👋
-                        </h1>
+                    <div className="flex items-center justify-between w-full animate-fade-in">
+                        <div className="flex items-center gap-2">
+                            <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
+                                반가워요, <span className="text-primary-600 dark:text-primary-400">{userName}</span>님! 👋
+                            </h1>
+                            <button
+                                onClick={() => {
+                                    setTempName(userName);
+                                    setIsEditingName(true);
+                                }}
+                                className="p-1.5 text-slate-300 hover:text-slate-500 hover:bg-slate-100 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-slate-800 rounded-full transition-colors"
+                            >
+                                <Edit2 className="w-4 h-4" />
+                            </button>
+                        </div>
                         <button
-                            onClick={() => {
-                                setTempName(userName);
-                                setIsEditingName(true);
-                            }}
-                            className="p-1.5 text-slate-300 hover:text-slate-500 hover:bg-slate-100 rounded-full transition-colors"
+                            onClick={onToggleDarkMode}
+                            className="p-2 rounded-full bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                            title={isDarkMode ? "라이트 모드로 변경" : "다크 모드로 변경"}
                         >
-                            <Edit2 className="w-4 h-4" />
+                            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </button>
                     </div>
                 )}
@@ -91,14 +100,14 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
             </section>
 
             {/* Learning Progress */}
-            <section className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+            <section className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700">
                 <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                    <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                         <Trophy className="w-5 h-5 text-yellow-500" />
                         {userName ? `${userName}님의 ` : '나의 '}학습 현황
                     </h3>
                     <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-slate-500">
+                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
                             {learnedCount} / {totalCount} 완료
                         </span>
                         {learnedCount > 0 && (
@@ -112,7 +121,7 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
                         )}
                     </div>
                 </div>
-                <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
                         className="h-full bg-primary-500 transition-all duration-1000 ease-out"
                         style={{ width: `${progress}%` }}
@@ -127,13 +136,13 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
             <div className="grid grid-cols-2 gap-4">
                 <button
                     onClick={() => onNavigate('study')}
-                    className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-primary-200 hover:shadow-md transition-all text-left group"
+                    className="p-5 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 hover:border-primary-200 dark:hover:border-primary-500 hover:shadow-md transition-all text-left group"
                 >
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-green-200 transition-colors">
+                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-3 group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
                         <span className="text-xl">📚</span>
                     </div>
-                    <h3 className="font-bold text-slate-800">학습하기</h3>
-                    <div className="flex items-center text-sm text-slate-500 mt-1">
+                    <h3 className="font-bold text-slate-800 dark:text-white">학습하기</h3>
+                    <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 mt-1">
                         카테고리별 공부
                         <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
                     </div>
@@ -141,13 +150,13 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
 
                 <button
                     onClick={() => onNavigate('quiz')}
-                    className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-primary-200 hover:shadow-md transition-all text-left group"
+                    className="p-5 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 hover:border-primary-200 dark:hover:border-primary-500 hover:shadow-md transition-all text-left group"
                 >
-                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-orange-200 transition-colors">
+                    <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-3 group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors">
                         <span className="text-xl">📝</span>
                     </div>
-                    <h3 className="font-bold text-slate-800">퀴즈 풀기</h3>
-                    <div className="flex items-center text-sm text-slate-500 mt-1">
+                    <h3 className="font-bold text-slate-800 dark:text-white">퀴즈 풀기</h3>
+                    <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 mt-1">
                         실력 테스트
                         <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
                     </div>
@@ -155,20 +164,20 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
 
                 <button
                     onClick={() => onNavigate('flashcard')}
-                    className="col-span-2 p-5 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-primary-200 hover:shadow-md transition-all text-left group flex items-center justify-between"
+                    className="col-span-2 p-5 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 hover:border-primary-200 dark:hover:border-primary-500 hover:shadow-md transition-all text-left group flex items-center justify-between"
                 >
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
                             <span className="text-xl">🃏</span>
                         </div>
                         <div>
-                            <h3 className="font-bold text-slate-800">플래시카드 (깜빡이)</h3>
-                            <div className="text-sm text-slate-500 mt-1">
+                            <h3 className="font-bold text-slate-800 dark:text-white">플래시카드 (깜빡이)</h3>
+                            <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                                 뒤집으며 재미있게 암기하기
                             </div>
                         </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 opacity-50 text-slate-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="w-5 h-5 opacity-50 text-slate-400 dark:text-slate-500 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
                 </button>
             </div>
         </div>
