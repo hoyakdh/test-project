@@ -146,7 +146,12 @@ function App() {
   };
 
   return (
-    <Layout currentTab={currentTab} onTabChange={setCurrentTab}>
+    <Layout
+      currentTab={currentTab}
+      onTabChange={setCurrentTab}
+      isDarkMode={isDarkMode}
+      onToggleDarkMode={toggleDarkMode}
+    >
       {renderContent()}
     </Layout>
   );

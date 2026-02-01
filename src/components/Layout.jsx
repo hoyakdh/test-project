@@ -1,7 +1,7 @@
 import React from 'react';
-import { Home, BookOpen, GraduationCap, Search, Menu } from 'lucide-react';
+import { Home, BookOpen, GraduationCap, Search, Menu, Moon, Sun } from 'lucide-react';
 
-export default function Layout({ children, currentTab, onTabChange }) {
+export default function Layout({ children, currentTab, onTabChange, isDarkMode, onToggleDarkMode }) {
     const navItems = [
         { id: 'home', label: '홈', icon: Home },
         { id: 'study', label: '학습', icon: BookOpen },
@@ -20,7 +20,7 @@ export default function Layout({ children, currentTab, onTabChange }) {
                     </h1>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex gap-1">
+                    <nav className="hidden md:flex gap-1 items-center">
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
@@ -34,6 +34,14 @@ export default function Layout({ children, currentTab, onTabChange }) {
                                 {item.label}
                             </button>
                         ))}
+                        {/* Dark Mode Toggle (Desktop) */}
+                        <button
+                            onClick={onToggleDarkMode}
+                            className="ml-2 p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 transition-colors"
+                            aria-label="Toggle Dark Mode"
+                        >
+                            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                        </button>
                     </nav>
                 </div>
             </header>
@@ -57,6 +65,14 @@ export default function Layout({ children, currentTab, onTabChange }) {
                             <span className="text-[10px] font-medium">{item.label}</span>
                         </button>
                     ))}
+                    {/* Dark Mode Toggle (Mobile) */}
+                    <button
+                        onClick={onToggleDarkMode}
+                        className="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400"
+                    >
+                        {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+                        <span className="text-[10px] font-medium">{isDarkMode ? '라이트' : '다크'}</span>
+                    </button>
                 </div>
             </nav>
         </div>

@@ -70,13 +70,7 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
                                 <Edit2 className="w-4 h-4" />
                             </button>
                         </div>
-                        <button
-                            onClick={onToggleDarkMode}
-                            className="p-2 rounded-full bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                            title={isDarkMode ? "라이트 모드로 변경" : "다크 모드로 변경"}
-                        >
-                            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                        </button>
+
                     </div>
                 )}
             </div>
