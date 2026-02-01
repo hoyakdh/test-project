@@ -1,35 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { idioms } from '../data/idioms';
-import { ChevronLeft, ChevronRight, Shuffle, Repeat } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Shuffle, Repeat, Volume2 } from 'lucide-react';
+import { speak, stopSpeech } from '../utils/tts';
 
 export default function FlashcardMode() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [shuffledIdioms, setShuffledIdioms] = useState([...idioms]);
 
-    // Shuffle on mount
+    // Shuffle on mount and cleanup speech on unmount
     useEffect(() => {
-        // Simple shuffle for variety
         setShuffledIdioms([...idioms].sort(() => Math.random() - 0.5));
+        return () => stopSpeech();
     }, []);
 
     const currentCard = shuffledIdioms[currentIndex];
 
     const handleNext = (e) => {
+        stopSpeech();
         e.stopPropagation();
         setIsFlipped(false);
         setTimeout(() => {
             setCurrentIndex((prev) => (prev + 1) % shuffledIdioms.length);
-        }, 150); // Small delay for better UX if flipping back? No, just reset immediate.
+        }, 150);
     };
 
     const handlePrev = (e) => {
+        stopSpeech();
         e.stopPropagation();
         setIsFlipped(false);
         setCurrentIndex((prev) => (prev - 1 + shuffledIdioms.length) % shuffledIdioms.length);
     };
 
     const handleShuffle = (e) => {
+        stopSpeech();
         e.stopPropagation();
         setIsFlipped(false);
         setShuffledIdioms([...idioms].sort(() => Math.random() - 0.5));
@@ -38,6 +42,11 @@ export default function FlashcardMode() {
 
     const handleCardClick = () => {
         setIsFlipped(!isFlipped);
+    };
+
+    const handleSpeak = (e, text) => {
+        e.stopPropagation();
+        speak(text);
     };
 
     return (
@@ -67,9 +76,20 @@ export default function FlashcardMode() {
                         <span className="text-sm font-bold text-primary-500 mb-6 bg-primary-50 px-3 py-1 rounded-full">
                             터치해서 뜻 보기
                         </span>
-                        <h2 className="text-5xl md:text-6xl font-extrabold text-slate-800 mb-6 break-keep leading-tight">
-                            {currentCard.idiom}
-                        </h2>
+
+                        <div className="flex flex-col items-center gap-2 mb-6">
+                            <h2 className="text-5xl md:text-6xl font-extrabold text-slate-800 break-keep leading-tight">
+                                {currentCard.idiom}
+                            </h2>
+                            <button
+                                onClick={(e) => handleSpeak(e, currentCard.idiom)}
+                                className="p-3 bg-primary-50 text-primary-600 rounded-full hover:bg-primary-100 hover:text-primary-700 transition-colors mt-2"
+                                title="듣기"
+                            >
+                                <Volume2 className="w-6 h-6" />
+                            </button>
+                        </div>
+
                         <p className="text-3xl md:text-4xl font-serif text-slate-400">
                             {currentCard.hanja}
                         </p>
@@ -77,6 +97,16 @@ export default function FlashcardMode() {
 
                     {/* Back Face (Meaning) */}
                     <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-8">
+                        <div className="absolute top-6 right-6">
+                            <button
+                                onClick={(e) => handleSpeak(e, `${currentCard.idiom}. ${currentCard.meaning}`)}
+                                className="p-3 bg-white/20 text-white rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
+                                title="듣기"
+                            >
+                                <Volume2 className="w-6 h-6" />
+                            </button>
+                        </div>
+
                         <span className="text-sm font-bold text-slate-400 mb-6 border border-slate-600 px-3 py-1 rounded-full">
                             {currentCard.category}
                         </span>

@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Volume2, BookOpen, CheckCircle } from 'lucide-react';
+import { speak, stopSpeech } from '../utils/tts';
 
 export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
+    // Stop speech when modal closes
+    useEffect(() => {
+        return () => stopSpeech();
+    }, []);
+
+    const handleClose = () => {
+        stopSpeech();
+        onClose();
+    };
+
     if (!idiom) return null;
 
     return (
@@ -9,17 +20,28 @@ export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
             <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative animate-scale-up">
 
                 {/* Header */}
-                <div className="bg-primary-50 p-6 text-center border-b border-primary-100">
+                <div className="bg-primary-50 p-6 text-center border-b border-primary-100 relative">
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-white/50"
                     >
                         <X className="w-6 h-6" />
                     </button>
+
                     <span className="inline-block text-xs font-bold tracking-wider text-primary-600 bg-white px-2 py-1 rounded-full mb-3 uppercase shadow-sm">
                         {idiom.category}
                     </span>
-                    <h2 className="text-3xl font-extrabold text-slate-900 mb-1">{idiom.idiom}</h2>
+
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                        <h2 className="text-3xl font-extrabold text-slate-900">{idiom.idiom}</h2>
+                        <button
+                            onClick={() => speak(`${idiom.idiom}. ${idiom.meaning}`)}
+                            className="p-1.5 bg-primary-100 text-primary-600 rounded-full hover:bg-primary-200 transition-colors"
+                            title="듣기"
+                        >
+                            <Volume2 className="w-5 h-5" />
+                        </button>
+                    </div>
                     <p className="text-2xl font-serif text-slate-600">{idiom.hanja}</p>
                 </div>
 
@@ -80,7 +102,7 @@ export default function IdiomModal({ idiom, onClose, isLearned, onToggle }) {
                         )}
                     </button>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
                     >
                         닫기
