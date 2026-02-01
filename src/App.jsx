@@ -9,15 +9,28 @@ import { idioms } from './data/idioms';
 function App() {
   const [currentTab, setCurrentTab] = useState('home');
   // Store IDs of learned idioms
+  // Store IDs of learned idioms
   const [learnedIds, setLearnedIds] = useState([]);
+  const [userName, setUserName] = useState('');
 
-  // Initialize progress
+  // Initialize progress and user name
   useEffect(() => {
-    const saved = localStorage.getItem('sajaseong-progress');
-    if (saved) {
-      setLearnedIds(JSON.parse(saved));
+    const savedProgress = localStorage.getItem('sajaseong-progress');
+    if (savedProgress) {
+      setLearnedIds(JSON.parse(savedProgress));
+    }
+
+    const savedName = localStorage.getItem('sajaseong-username');
+    if (savedName) {
+      setUserName(savedName);
     }
   }, []);
+
+  // Update Name
+  const handleNameChange = (name) => {
+    setUserName(name);
+    localStorage.setItem('sajaseong-username', name);
+  };
 
   // Toggle learned status
   const toggleLearned = (id) => {
@@ -47,6 +60,8 @@ function App() {
           learnedCount={learnedIds.length}
           totalCount={idioms.length}
           onReset={resetProgress}
+          userName={userName}
+          onNameChange={handleNameChange}
         />;
       case 'study':
         return <StudyMode learnedIds={learnedIds} onToggleLearned={toggleLearned} />;
