@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import StudyMode from './components/StudyMode';
 import QuizMode from './components/QuizMode';
+import FlashcardMode from './components/FlashcardMode';
 import Dictionary from './components/Dictionary';
 import { idioms } from './data/idioms';
 
