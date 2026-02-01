@@ -8,27 +8,39 @@ import { idioms } from './data/idioms';
 
 function App() {
   const [currentTab, setCurrentTab] = useState('home');
-  const [learnedCount, setLearnedCount] = useState(0);
+  // Store IDs of learned idioms
+  const [learnedIds, setLearnedIds] = useState([]);
 
   // Initialize progress
   useEffect(() => {
-    // In a real app, load from localStorage
     const saved = localStorage.getItem('sajaseong-progress');
     if (saved) {
-      setLearnedCount(JSON.parse(saved).length);
+      setLearnedIds(JSON.parse(saved));
     }
   }, []);
+
+  // Toggle learned status
+  const toggleLearned = (id) => {
+    setLearnedIds(prev => {
+      const newIds = prev.includes(id)
+        ? prev.filter(itemId => itemId !== id)
+        : [...prev, id];
+
+      localStorage.setItem('sajaseong-progress', JSON.stringify(newIds));
+      return newIds;
+    });
+  };
 
   const renderContent = () => {
     switch (currentTab) {
       case 'home':
-        return <Dashboard onNavigate={setCurrentTab} learnedCount={learnedCount} totalCount={idioms.length} />;
+        return <Dashboard onNavigate={setCurrentTab} learnedCount={learnedIds.length} totalCount={idioms.length} />;
       case 'study':
-        return <StudyMode />;
+        return <StudyMode learnedIds={learnedIds} onToggleLearned={toggleLearned} />;
       case 'quiz':
         return <QuizMode />;
       case 'dict':
-        return <Dictionary />;
+        return <Dictionary learnedIds={learnedIds} onToggleLearned={toggleLearned} />;
       default:
         return <Dashboard />;
     }

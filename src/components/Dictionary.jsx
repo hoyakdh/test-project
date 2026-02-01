@@ -3,7 +3,7 @@ import { idioms } from '../data/idioms';
 import IdiomModal from './IdiomModal';
 import { Search } from 'lucide-react';
 
-export default function Dictionary() {
+export default function Dictionary({ learnedIds, onToggleLearned }) {
     const [query, setQuery] = useState("");
     const [selectedIdiom, setSelectedIdiom] = useState(null);
 
@@ -33,20 +33,26 @@ export default function Dictionary() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[200px]">
                 {filtered.length > 0 ? (
                     <ul className="divide-y divide-slate-100">
-                        {filtered.map(item => (
-                            <li key={item.id}>
-                                <button
-                                    onClick={() => setSelectedIdiom(item)}
-                                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors text-left"
-                                >
-                                    <div>
-                                        <span className="text-lg font-bold text-slate-800">{item.idiom}</span>
-                                        <span className="ml-2 text-sm text-slate-400 font-serif">{item.hanja}</span>
-                                        <p className="text-sm text-slate-500 mt-1 line-clamp-1">{item.meaning}</p>
-                                    </div>
-                                </button>
-                            </li>
-                        ))}
+                        {filtered.map(item => {
+                            const isLearned = learnedIds && learnedIds.includes(item.id);
+                            return (
+                                <li key={item.id}>
+                                    <button
+                                        onClick={() => setSelectedIdiom(item)}
+                                        className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors text-left"
+                                    >
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-lg font-bold text-slate-800">{item.idiom}</span>
+                                                {isLearned && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">학습완료</span>}
+                                            </div>
+                                            <span className="ml-2 text-sm text-slate-400 font-serif">{item.hanja}</span>
+                                            <p className="text-sm text-slate-500 mt-1 line-clamp-1">{item.meaning}</p>
+                                        </div>
+                                    </button>
+                                </li>
+                            );
+                        })}
                     </ul>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-12 text-slate-400">
@@ -61,6 +67,8 @@ export default function Dictionary() {
                 <IdiomModal
                     idiom={selectedIdiom}
                     onClose={() => setSelectedIdiom(null)}
+                    isLearned={learnedIds && learnedIds.includes(selectedIdiom.id)}
+                    onToggle={onToggleLearned}
                 />
             )}
         </div>

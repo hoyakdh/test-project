@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { categories, idioms } from '../data/idioms';
 import IdiomModal from './IdiomModal';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, CheckCircle } from 'lucide-react';
 
-export default function StudyMode() {
+export default function StudyMode({ learnedIds, onToggleLearned }) {
     // Tabs allow scrolling on mobile
     const [activeCategory, setActiveCategory] = useState(categories[0]);
     const [selectedIdiom, setSelectedIdiom] = useState(null);
@@ -20,8 +20,8 @@ export default function StudyMode() {
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
                         className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold transition-all ${activeCategory === cat
-                                ? 'bg-primary-600 text-white shadow-md shadow-primary-200'
-                                : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-200'
+                            ? 'bg-primary-600 text-white shadow-md shadow-primary-200'
+                            : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-200'
                             }`}
                     >
                         {cat}
@@ -31,22 +31,33 @@ export default function StudyMode() {
 
             {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-20">
-                {filteredIdioms.map((item) => (
-                    <button
-                        key={item.id}
-                        onClick={() => setSelectedIdiom(item)}
-                        className="flex items-center p-4 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-primary-200 hover:shadow-md transition-all text-left"
-                    >
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-bold text-slate-400">#{item.id}</span>
-                                <h3 className="font-bold text-slate-800 truncate">{item.idiom}</h3>
+                {filteredIdioms.map((item) => {
+                    const isLearned = learnedIds.includes(item.id);
+                    return (
+                        <button
+                            key={item.id}
+                            onClick={() => setSelectedIdiom(item)}
+                            className={`flex items-center p-4 rounded-xl shadow-sm border transition-all text-left relative ${isLearned
+                                    ? 'bg-green-50 border-green-200 hover:border-green-300'
+                                    : 'bg-white border-slate-100 hover:border-primary-200 hover:shadow-md'
+                                }`}
+                        >
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className={`text-xs font-bold ${isLearned ? 'text-green-600' : 'text-slate-400'}`}>
+                                        #{item.id}
+                                    </span>
+                                    <h3 className={`font-bold truncate ${isLearned ? 'text-green-900' : 'text-slate-800'}`}>
+                                        {item.idiom}
+                                    </h3>
+                                    {isLearned && <CheckCircle className="w-4 h-4 text-green-500" />}
+                                </div>
+                                <p className="text-sm text-slate-500 truncate font-serif">{item.hanja}</p>
                             </div>
-                            <p className="text-sm text-slate-500 truncate font-serif">{item.hanja}</p>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-slate-300" />
-                    </button>
-                ))}
+                            <ChevronRight className="w-5 h-5 text-slate-300" />
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Modal */}
@@ -54,6 +65,8 @@ export default function StudyMode() {
                 <IdiomModal
                     idiom={selectedIdiom}
                     onClose={() => setSelectedIdiom(null)}
+                    isLearned={learnedIds.includes(selectedIdiom.id)}
+                    onToggle={onToggleLearned}
                 />
             )}
         </div>

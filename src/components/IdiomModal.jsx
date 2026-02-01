@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Volume2, BookOpen } from 'lucide-react';
+import { X, Volume2, BookOpen, CheckCircle } from 'lucide-react';
 
 export default function IdiomModal({ idiom, onClose }) {
     if (!idiom) return null;
