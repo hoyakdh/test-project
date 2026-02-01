@@ -65,6 +65,8 @@ function App() {
         />;
       case 'study':
         return <StudyMode learnedIds={learnedIds} onToggleLearned={toggleLearned} />;
+      case 'flashcard':
+        return <FlashcardMode />;
       case 'quiz':
         return <QuizMode />;
       case 'dict':

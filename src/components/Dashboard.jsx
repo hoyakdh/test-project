@@ -152,6 +152,24 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
                         <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
                     </div>
                 </button>
+
+                <button
+                    onClick={() => onNavigate('flashcard')}
+                    className="col-span-2 p-5 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-primary-200 hover:shadow-md transition-all text-left group flex items-center justify-between"
+                >
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                            <span className="text-xl">🃏</span>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-slate-800">플래시카드 (깜빡이)</h3>
+                            <div className="text-sm text-slate-500 mt-1">
+                                뒤집으며 재미있게 암기하기
+                            </div>
+                        </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5 opacity-50 text-slate-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                </button>
             </div>
         </div>
     );
