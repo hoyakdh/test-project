@@ -3,7 +3,7 @@ import { idioms } from '../data/idioms';
 import HanjaTooltip from './HanjaTooltip';
 import { Trophy, ChevronRight, Star, RotateCcw, User, Edit2, Check, Moon, Sun } from 'lucide-react';
 
-export default function Dashboard({ onNavigate, learnedCount, totalCount, onReset, userName, onNameChange, isDarkMode, onToggleDarkMode }) {
+export default function Dashboard({ onNavigate, learnedCount, totalCount, onReset, userName, onNameChange, isDarkMode, onToggleDarkMode, levelInfo }) {
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState("");
 
@@ -25,7 +25,7 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
         }
     };
 
-    const progress = Math.round((learnedCount / totalCount) * 100);
+
 
     return (
         <div className="space-y-6">
@@ -109,37 +109,71 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
                 </div>
             </section>
 
-            {/* Learning Progress */}
-            <section className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700">
-                <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Trophy className="w-5 h-5 text-yellow-500" />
-                        {userName ? `${userName}님의 ` : '나의 '}학습 현황
-                    </h3>
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                            {learnedCount} / {totalCount} 완료
-                        </span>
-                        {learnedCount > 0 && (
-                            <button
-                                onClick={onReset}
-                                className="p-1 text-slate-300 hover:text-red-500 transition-colors"
-                                title="학습 기록 초기화"
+            {/* Learning Status & Level Card */}
+            <section className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+                {/* Background Decoration */}
+                <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 bg-gradient-to-br ${levelInfo ? levelInfo.color : 'from-gray-400 to-gray-600'} -translate-y-1/2 translate-x-1/2`} />
+
+                <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <span className="text-xl">{levelInfo ? levelInfo.icon : '🐶'}</span>
+                            {userName ? `${userName}님의 ` : '나의 '}서당 등급
+                        </h3>
+                        <div className="flex items-center gap-2">
+                            <span className={`text-xs font-bold px-2 py-1 rounded-lg bg-gradient-to-r ${levelInfo ? levelInfo.color : 'from-gray-400 to-gray-600'} text-white shadow-sm`}>
+                                Lv. {levelInfo ? levelInfo.level : 1}
+                            </span>
+                            {learnedCount > 0 && (
+                                <button
+                                    onClick={onReset}
+                                    className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all"
+                                    title="학습 기록 초기화"
+                                >
+                                    <RotateCcw className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-md bg-gradient-to-br ${levelInfo ? levelInfo.color : 'from-gray-100 to-gray-300'} text-white ring-4 ring-white dark:ring-slate-700`}>
+                            {levelInfo ? levelInfo.icon : '🐶'}
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-0.5">
+                                {levelInfo ? levelInfo.title : '서당개'}
+                            </h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {levelInfo ? levelInfo.desc : '시작이 반!'}
+                            </p>
+                        </div>
+                        <div className="text-right">
+                            <span className="block text-2xl font-black text-slate-800 dark:text-white">
+                                {learnedCount} <span className="text-xs font-medium text-slate-400">/ {totalCount}</span>
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Learned</span>
+                        </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="mb-2">
+                        <div className="flex justify-between text-xs font-medium text-slate-400 mb-1.5">
+                            <span>
+                                {levelInfo?.level < 5 ? `다음 레벨까지 ${levelInfo.next - learnedCount}개 남음` : '최고 레벨 달성!'}
+                            </span>
+                            <span>{Math.round((learnedCount / totalCount) * 100)}%</span>
+                        </div>
+                        <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full transition-all duration-1000 ease-out flex items-center justify-end pr-1 relative bg-gradient-to-r ${levelInfo ? levelInfo.color : 'from-gray-400 to-gray-600'}`}
+                                style={{ width: `${(learnedCount / totalCount) * 100}%` }}
                             >
-                                <RotateCcw className="w-4 h-4" />
-                            </button>
-                        )}
+                                <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]" />
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-primary-500 transition-all duration-1000 ease-out"
-                        style={{ width: `${progress}%` }}
-                    />
-                </div>
-                <p className="text-right text-xs text-slate-400 mt-2">
-                    {progress}% 달성
-                </p>
             </section>
 
             {/* Quick Actions */}

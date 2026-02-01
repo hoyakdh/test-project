@@ -34,6 +34,49 @@ function App() {
     }
   }, []);
 
+  // Level Calculation Logic (Based on learned count)
+  const getLevelInfo = (count) => {
+    /*
+    Lv 1: 0 ~ 19 (서당개) - Next: 20
+    Lv 2: 20 ~ 39 (유생) - Next: 40
+    Lv 3: 40 ~ 69 (선비) - Next: 70
+    Lv 4: 70 ~ 94 (진사) - Next: 95
+    Lv 5: 95 ~ 100 (대제학) - Max
+    */
+    if (count >= 95) return {
+      level: 5, title: "대제학", icon: "👑",
+      min: 95, max: 100, next: 100,
+      desc: "사자성어의 달인, 존경합니다!",
+      color: "from-yellow-400 to-amber-600"
+    };
+    if (count >= 70) return {
+      level: 4, title: "진사", icon: "📜",
+      min: 70, max: 94, next: 95,
+      desc: "과거 급제! 대단한 실력입니다.",
+      color: "from-purple-400 to-indigo-600"
+    };
+    if (count >= 40) return {
+      level: 3, title: "선비", icon: "🎩",
+      min: 40, max: 69, next: 70,
+      desc: "학문의 깊이가 느껴집니다.",
+      color: "from-blue-400 to-cyan-600"
+    };
+    if (count >= 20) return {
+      level: 2, title: "유생", icon: "👦",
+      min: 20, max: 39, next: 40,
+      desc: "배움의 즐거움을 알아가시네요.",
+      color: "from-green-400 to-emerald-600"
+    };
+    return {
+      level: 1, title: "서당개", icon: "🐶",
+      min: 0, max: 19, next: 20,
+      desc: "시작이 반! 풍월을 읊어봅시다.",
+      color: "from-stone-400 to-stone-600"
+    };
+  };
+
+  const levelInfo = getLevelInfo(learnedIds.length);
+
   // Update Name
   const handleNameChange = (name) => {
     setUserName(name);
@@ -87,6 +130,7 @@ function App() {
           onNameChange={handleNameChange}
           isDarkMode={isDarkMode}
           onToggleDarkMode={toggleDarkMode}
+          levelInfo={levelInfo}
         />;
       case 'study':
         return <StudyMode learnedIds={learnedIds} onToggleLearned={toggleLearned} />;
