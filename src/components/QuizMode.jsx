@@ -29,11 +29,16 @@ export default function QuizMode() {
 
             const options = [...distractors, item.idiom].sort(() => 0.5 - Math.random());
 
+            // Handle multiple examples
+            const exampleSentence = item.examples
+                ? item.examples[Math.floor(Math.random() * item.examples.length)]
+                : item.example;
+
             return {
                 target: item,
                 type,
                 options,
-                questionText: type === 'meaning' ? item.meaning : item.example.replace(item.idiom, 'OOO')
+                questionText: type === 'meaning' ? item.meaning : exampleSentence.replace(item.idiom, 'OOO')
             };
         });
 

@@ -31,7 +31,9 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount }) {
                 <p className="text-lg font-medium opacity-95">{dailyIdiom.meaning}</p>
 
                 <div className="mt-6 pt-6 border-t border-white/20">
-                    <p className="text-sm italic opacity-80">"{dailyIdiom.example}"</p>
+                    <p className="text-sm italic opacity-80">
+                        "{dailyIdiom.examples ? dailyIdiom.examples[0] : dailyIdiom.example}"
+                    </p>
                 </div>
             </section>
 

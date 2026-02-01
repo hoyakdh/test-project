@@ -41,9 +41,19 @@ export default function IdiomModal({ idiom, onClose }) {
                         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wide mb-2">
                             실생활 예시
                         </h3>
-                        <p className="text-slate-700 italic leading-relaxed">
-                            "{idiom.example}"
-                        </p>
+                        <ul className="space-y-2">
+                            {idiom.examples ? (
+                                idiom.examples.map((ex, i) => (
+                                    <li key={i} className="text-slate-700 italic leading-relaxed">
+                                        • "{ex}"
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="text-slate-700 italic leading-relaxed">
+                                    "{idiom.example}"
+                                </li>
+                            )}
+                        </ul>
                     </div>
 
                 </div>
