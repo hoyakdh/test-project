@@ -1,4 +1,3 @@
-```javascript
 import React, { useState } from 'react';
 import { idioms } from '../data/idioms';
 import IdiomModal from './IdiomModal';
@@ -74,4 +73,3 @@ export default function Dictionary({ learnedIds, onToggleLearned }) {
         </div>
     );
 }
-```
