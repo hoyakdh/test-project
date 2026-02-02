@@ -49,6 +49,11 @@ export default function Layout({ children, currentTab, onTabChange, isDarkMode, 
             {/* Main Content */}
             <main className="flex-1 max-w-4xl mx-auto w-full p-4 pb-24 md:pb-8">
                 {children}
+
+                {/* Footer */}
+                <footer className="mt-8 py-6 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800">
+                    <p>제작자: hoyakdh@icloud.com</p>
+                </footer>
             </main>
 
             {/* Mobile Bottom Nav */}

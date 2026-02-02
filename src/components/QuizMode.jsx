@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { idioms } from '../data/idioms';
-import { CheckCircle, XCircle, RefreshCw, Play, Home, Timer, Zap, Infinity } from 'lucide-react';
+import { CheckCircle, XCircle, RefreshCw, Play, Home, Timer, Zap, Infinity, Keyboard, Lightbulb } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function QuizMode() {
-    const [gameMode, setGameMode] = useState(null); // null(menu), 'normal', 'timeAttack'
+    const [gameMode, setGameMode] = useState(null); // null(menu), 'normal', 'timeAttack', 'typing'
     const [gameState, setGameState] = useState('idle'); // idle, playing, finished
     const [questions, setQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [feedback, setFeedback] = useState(null);
+    const [inputValue, setInputValue] = useState(""); // For typing mode
+    const [showHint, setShowHint] = useState(false); // Hint state
 
     // Time Attack State
     const [timeLeft, setTimeLeft] = useState(60);
@@ -53,7 +55,7 @@ export default function QuizMode() {
             target,
             type,
             options,
-            questionText: type === 'meaning' ? target.meaning : exampleSentence.replace(target.idiom, 'OOO')
+            questionText: type === 'meaning' ? target.meaning : exampleSentence.replace(target.idiom, 'OOOO')
         };
     };
 
@@ -63,13 +65,16 @@ export default function QuizMode() {
         setCurrentIndex(0);
         setGameState('playing');
         setFeedback(null);
+        setInputValue("");
+        setShowHint(false);
 
-        if (mode === 'normal') {
-            // Normal Mode: Pre-generate 5 questions
+        if (mode === 'normal' || mode === 'typing') {
+            // Normal & Typing Mode: Pre-generate 5 questions
             const pool = [...idioms].sort(() => 0.5 - Math.random());
             const selected = pool.slice(0, 5);
             const newQuestions = selected.map(item => {
                 const type = Math.random() > 0.5 ? 'meaning' : 'blank';
+                // Options not needed for typing mode strictly speaking, but keep for structure consistency
                 const distractors = idioms.filter(i => i.id !== item.id).sort(() => 0.5 - Math.random()).slice(0, 3).map(i => i.idiom);
                 const options = [...distractors, item.idiom].sort(() => 0.5 - Math.random());
                 const example = item.examples ? item.examples[0] : item.example;
@@ -77,7 +82,7 @@ export default function QuizMode() {
                     target: item,
                     type,
                     options,
-                    questionText: type === 'meaning' ? item.meaning : example.replace(item.idiom, 'OOO')
+                    questionText: type === 'meaning' ? item.meaning : example.replace(item.idiom, 'OOOO')
                 };
             });
             setQuestions(newQuestions);
@@ -93,6 +98,20 @@ export default function QuizMode() {
         const currentQ = questions[currentIndex];
         const isCorrect = selectedOption === currentQ.target.idiom;
 
+        processResult(isCorrect);
+    };
+
+    const handleTypingSubmit = (e) => {
+        e.preventDefault();
+        if (!inputValue.trim()) return;
+
+        const currentQ = questions[currentIndex];
+        const isCorrect = inputValue.trim().replace(/\s+/g, '') === currentQ.target.idiom.replace(/\s+/g, '');
+
+        processResult(isCorrect);
+    };
+
+    const processResult = (isCorrect) => {
         if (isCorrect) {
             setScore(s => s + 1);
             setFeedback('correct');
@@ -103,9 +122,8 @@ export default function QuizMode() {
                 colors: ['#0ea5e9', '#6366f1']
             });
 
-            // Bonus Time logic
             if (gameMode === 'timeAttack') {
-                setTimeLeft(t => Math.min(t + 3, 60)); // Max cap at 60s? or unlimited? Let's cap slightly to prevent farming, or maybe unlimited is fun. Let's do uncapped.
+                setTimeLeft(t => Math.min(t + 3, 60));
             }
 
         } else {
@@ -115,21 +133,24 @@ export default function QuizMode() {
         // Delay for next question
         setTimeout(() => {
             setFeedback(null);
+            setInputValue("");
+            setShowHint(false);
 
-            if (gameMode === 'normal') {
+            if (gameMode === 'normal' || gameMode === 'typing') {
                 if (currentIndex < questions.length - 1) {
                     setCurrentIndex(c => c + 1);
                 } else {
                     finishGame();
                 }
             } else {
-                // Time Attack: Add next question dynamically
-                if (isActive || timeLeft > 0) { // Check if game still active
+                // Time Attack
+                const currentQ = questions[currentIndex];
+                if (isActive || timeLeft > 0) {
                     setQuestions(prev => [...prev, generateQuestion(currentQ.target.id)]);
                     setCurrentIndex(c => c + 1);
                 }
             }
-        }, 1000); // Faster transition for Time Attack? Maybe 1s is fine.
+        }, 1500); // Slightly longer delay to read feedback
     };
 
     const finishGame = () => {
@@ -148,6 +169,8 @@ export default function QuizMode() {
         setScore(0);
         setQuestions([]);
         setIsActive(false);
+        setInputValue("");
+        setShowHint(false);
     }
 
     // -- Renders --
@@ -190,6 +213,21 @@ export default function QuizMode() {
                         </div>
                         <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">타임 어택</h3>
                         <p className="text-sm text-slate-500 dark:text-slate-400">60초 동안 최대한 많이! <br />정답 시 +3초 보너스.</p>
+                    </button>
+
+                    {/* Typing Mode */}
+                    <button
+                        onClick={() => startQuiz('typing')}
+                        className="col-span-1 md:col-span-2 p-6 bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-100 dark:border-slate-700 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-xl transition-all group text-left relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Keyboard className="w-24 h-24 text-purple-500" />
+                        </div>
+                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 mb-4">
+                            <Keyboard className="w-6 h-6 fill-current" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">타자 퀴즈</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">직접 사자성어를 입력하여 맞춰보세요. <br />진정한 실력자를 위한 모드!</p>
                     </button>
                 </div>
             </div>
@@ -236,7 +274,7 @@ export default function QuizMode() {
         <div className="max-w-md mx-auto relative pb-20">
             {/* Header Info */}
             <div className="flex items-center justify-between mb-6 px-2">
-                {gameMode === 'normal' ? (
+                {gameMode === 'normal' || gameMode === 'typing' ? (
                     <span className="text-sm font-bold text-slate-400 dark:text-slate-500">
                         Question {currentIndex + 1} / 5
                     </span>
@@ -256,42 +294,104 @@ export default function QuizMode() {
             {/* Question Card */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-700 text-center mb-6 relative overflow-hidden min-h-[200px] flex flex-col items-center justify-center">
                 {feedback && (
-                    <div className={`absolute inset-0 flex items-center justify-center bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm z-10 animate-fade-in ${feedback === 'correct' ? 'text-green-500' : 'text-red-500'
+                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm z-10 animate-fade-in ${feedback === 'correct' ? 'text-green-500' : 'text-red-500'
                         }`}>
                         {feedback === 'correct' ? (
-                            <div className="flex flex-col items-center">
-                                <CheckCircle className="w-20 h-20 mb-2" />
-                                {gameMode === 'timeAttack' && <span className="text-xl font-bold">+3s</span>}
-                            </div>
+                            <>
+                                <CheckCircle className="w-16 h-16 mb-2" />
+                                <span className="text-2xl font-bold">정답입니다!</span>
+                                {gameMode === 'timeAttack' && <span className="text-sm font-bold mt-1">+3s</span>}
+                            </>
                         ) : (
-                            <XCircle className="w-20 h-20" />
+                            <>
+                                <XCircle className="w-16 h-16 mb-2" />
+                                <span className="text-2xl font-bold">틀렸습니다!</span>
+                                <div className="mt-2 p-2 bg-slate-100 dark:bg-slate-900 rounded-lg">
+                                    <span className="text-sm text-slate-500 dark:text-slate-400 block mb-1">정답</span>
+                                    <span className="text-lg font-bold text-slate-800 dark:text-white">{currentQ.target.idiom}</span>
+                                    <span className="text-xs text-slate-400 block">({currentQ.target.hanja})</span>
+                                </div>
+                            </>
                         )}
                     </div>
                 )}
 
                 <span className="inline-block px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 mb-4">
-                    {currentQ.type === 'meaning' ? '뜻에 맞는 사자성어는?' : '빈칸에 들어갈 말은?'}
+                    {gameMode === 'typing'
+                        ? '설명을 보고 사자성어를 입력하세요'
+                        : currentQ.type === 'meaning' ? '뜻에 맞는 사자성어는?' : '빈칸에 들어갈 말은?'
+                    }
                 </span>
-                <h3 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white leading-relaxed word-keep-all">
+                <h3 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white leading-relaxed word-keep-all whitespace-pre-line">
                     {currentQ.questionText}
                 </h3>
+
+                {/* Hint Display */}
+                {gameMode === 'typing' && showHint && (
+                    <div className="mt-4 animate-fade-in">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-sm font-medium">
+                            <Lightbulb className="w-4 h-4" />
+                            💡 힌트: 첫 글자는 "{currentQ.target.idiom[0]}" 입니다.
+                        </span>
+                    </div>
+                )}
             </div>
 
-            {/* Options */}
-            <div className="space-y-3">
-                {currentQ.options.map((option, idx) => (
+            {/* Options or Input */}
+            {gameMode === 'typing' ? (
+                <div className="space-y-4">
+                    <form onSubmit={handleTypingSubmit} className="relative">
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            placeholder="정답 입력 (예: 기고만장)"
+                            className="w-full text-center text-xl p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all font-bold placeholder-slate-300"
+                            autoFocus
+                            disabled={!!feedback}
+                        />
+
+                        {/* Hint Button */}
+                        {!showHint && !feedback && (
+                            <button
+                                type="button"
+                                onClick={() => setShowHint(true)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-900/30 rounded-full transition-colors"
+                                title="힌트 보기"
+                            >
+                                <Lightbulb className="w-5 h-5" />
+                            </button>
+                        )}
+                    </form>
+
                     <button
-                        key={idx}
-                        onClick={() => !feedback && handleAnswer(option)}
-                        className="w-full p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-slate-700 transition-all text-left animate-slide-up active:scale-[0.98]"
-                        style={{ animationDelay: `${idx * 50}ms` }}
-                        disabled={!!feedback}
+                        type="button" // Change to button to prevent double submit with form? No form needs submit. Wait, the form has onSubmit. Button should be type=submit.
+                        onClick={handleTypingSubmit}
+                        disabled={!inputValue.trim() || !!feedback}
+                        className="w-full py-4 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-xl font-bold shadow-md transition-all active:scale-[0.98]"
                     >
-                        <span className="inline-block w-6 text-slate-300 dark:text-slate-600 mr-2">{idx + 1}.</span>
-                        {option}
+                        제출하기
                     </button>
-                ))}
-            </div>
+                    <p className="text-center text-xs text-slate-400 mt-2">
+                        엔터(Enter) 키를 눌러 제출할 수 있습니다.
+                    </p>
+                </div>
+            ) : (
+                <div className="space-y-3">
+                    {currentQ.options.map((option, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => !feedback && handleAnswer(option)}
+                            className="w-full p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-slate-700 transition-all text-left animate-slide-up active:scale-[0.98]"
+                            style={{ animationDelay: `${idx * 50}ms` }}
+                            disabled={!!feedback}
+                        >
+                            <span className="inline-block w-6 text-slate-300 dark:text-slate-600 mr-2">{idx + 1}.</span>
+                            {option}
+                        </button>
+                    ))}
+                </div>
+            )}
 
             {/* Quit Button */}
             <button onClick={reset} className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-slate-400 text-sm underline hover:text-slate-600">
