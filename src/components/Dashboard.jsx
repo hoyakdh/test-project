@@ -104,7 +104,7 @@ export default function Dashboard({ onNavigate, learnedCount, totalCount, onRese
             </section>
 
             {/* Learning Status & Level Card */}
-            <section className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+            <section key={userName} className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden">
                 {/* Background Decoration */}
                 <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 bg-gradient-to-br ${levelInfo ? levelInfo.color : 'from-gray-400 to-gray-600'} -translate-y-1/2 translate-x-1/2`} />
 
