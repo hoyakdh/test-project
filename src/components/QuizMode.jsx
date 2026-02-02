@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { idioms } from '../data/idioms';
-import { CheckCircle, XCircle, RefreshCw, Play, Home, Timer, Zap, Infinity, Keyboard, Lightbulb } from 'lucide-react';
+import { CheckCircle, XCircle, RefreshCw, Play, Home, Timer, Zap, Infinity, Keyboard, Lightbulb, VolumeX, Volume2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function QuizMode() {
@@ -16,13 +16,53 @@ export default function QuizMode() {
     // Time Attack State
     const [timeLeft, setTimeLeft] = useState(60);
     const [isActive, setIsActive] = useState(false);
+    const [isMuted, setIsMuted] = useState(false); // Audio toggle state
+
+    // Audio Context Ref
+    const audioCtxRef = React.useRef(null);
+
+    // Initialize Audio Context on user interaction
+    const initAudio = () => {
+        if (!audioCtxRef.current) {
+            audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtxRef.current.state === 'suspended') {
+            audioCtxRef.current.resume();
+        }
+    };
+
+    // Play Tick Sound
+    const playTickSound = () => {
+        if (!audioCtxRef.current || isMuted) return; // Respect mute state
+
+        const oscillator = audioCtxRef.current.createOscillator();
+        const gainNode = audioCtxRef.current.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtxRef.current.destination);
+
+        // Sound characteristics: Short, high-ish pitch for "Tick"
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(800, audioCtxRef.current.currentTime); // 800Hz
+
+        // Envelope: swift attack and decay
+        gainNode.gain.setValueAtTime(0, audioCtxRef.current.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioCtxRef.current.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtxRef.current.currentTime + 0.1);
+
+        oscillator.start();
+        oscillator.stop(audioCtxRef.current.currentTime + 0.1);
+    };
 
     // Timer Effect
     useEffect(() => {
         let interval = null;
         if (isActive && timeLeft > 0) {
             interval = setInterval(() => {
-                setTimeLeft((time) => time - 1);
+                setTimeLeft((time) => {
+                    playTickSound(); // Play sound on tick
+                    return time - 1;
+                });
             }, 1000);
         } else if (timeLeft === 0 && isActive) {
             setIsActive(false);
@@ -60,6 +100,7 @@ export default function QuizMode() {
     };
 
     const startQuiz = (mode) => {
+        initAudio(); // Initialize audio for sound effects
         setGameMode(mode);
         setScore(0);
         setCurrentIndex(0);
@@ -128,6 +169,11 @@ export default function QuizMode() {
 
         } else {
             setFeedback('wrong');
+
+            // Penalty for Time Attack: -3 seconds
+            if (gameMode === 'timeAttack') {
+                setTimeLeft(t => Math.max(0, t - 3));
+            }
         }
 
         // Delay for next question
@@ -279,16 +325,34 @@ export default function QuizMode() {
                         Question {currentIndex + 1} / 5
                     </span>
                 ) : (
-                    <div className={`flex items-center gap-2 px-3 py-1 rounded-full font-mono font-bold text-lg ${timeLeft <= 10 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                        }`}>
-                        <Timer className="w-4 h-4" />
-                        {timeLeft}s
+                    <div className="flex items-center gap-2">
+                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full font-mono font-bold text-lg ${timeLeft <= 10 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                            }`}>
+                            <Timer className="w-4 h-4" />
+                            {timeLeft}s
+                        </div>
+                        <button
+                            onClick={() => setIsMuted(!isMuted)}
+                            className="p-1.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                            title={isMuted ? "소리 켜기" : "소리 끄기"}
+                        >
+                            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                        </button>
                     </div>
                 )}
 
-                <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-slate-800 px-3 py-1 rounded-full">
-                    Score: {score}
-                </span>
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-slate-800 px-3 py-1 rounded-full">
+                        Score: {score}
+                    </span>
+                    <button
+                        onClick={reset}
+                        className="p-1.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                        title="그만두기"
+                    >
+                        <Home className="w-5 h-5" />
+                    </button>
+                </div>
             </div>
 
             {/* Question Card */}
@@ -393,10 +457,6 @@ export default function QuizMode() {
                 </div>
             )}
 
-            {/* Quit Button */}
-            <button onClick={reset} className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-slate-400 text-sm underline hover:text-slate-600">
-                그만두기
-            </button>
         </div>
     );
 }
